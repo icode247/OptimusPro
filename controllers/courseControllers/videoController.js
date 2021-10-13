@@ -7,7 +7,7 @@ const videoModel = require('../../models/videoModel');
 exports.getAllVideos = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const videos = await courseModel.findOne({ _id: id }).populate('videos');
-  res.status(201).json({
+  res.status(200).json({
     status: 'success',
     data: {
       videos,
@@ -53,12 +53,12 @@ exports.streamVideo = catchAsync(async (req, res) => {
   //get the total size of the video
   const videoSize = fs.statSync(videoPath).size;
   //get a chunk size for the video (16m)
-  const CHUNK_SIZE = 10 ** 6;
+  const CHUNK_SIZE = 1 * 1e6;
   const start = Number(range.replace(/\D/g, ''));
   const end = Math.min(start + CHUNK_SIZE, videoSize - 1);
   const videoLength = end - start + 1;
   const headers = {
-    'Content-Range': `bytes-${start}-${end}/${videoSize}`,
+    'Content-Range': `bytes ${start}-${end}/${videoSize}`,
     'Accept-Ranges': 'bytes',
     'Content-length': videoLength,
     'Content-Type': 'video/mp4',

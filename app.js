@@ -7,6 +7,7 @@ const errorHandler = require('./utils/errorHandler');
 const userRouter = require('./routes/userRoute');
 const courseRouter = require('./routes/courseRoute');
 const blogRouter = require('./routes/blogRoute');
+const subcriptionRouter = require('./routes/subscriberRoute');
 
 const app = express();
 app.use(cors());
@@ -15,6 +16,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
+app.get('/', (req, res) => {
+  res.sendFile('index.html');
+});
 //Application Routers
 //1. User router
 app.use('/api/v1/user', userRouter);
@@ -27,6 +31,9 @@ app.use('/api/v1/blog', blogRouter);
 
 // 4 payment router
 ///
+
+// 5 subscription router
+app.use('/api/v1/subscription', subcriptionRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`The URL ${req.originalUrl} does not exists`, 404));

@@ -11,6 +11,10 @@ const paymentSchema = new mongoose.Schema({
     required: [true, 'Please give course name'],
     unique: true,
   },
+  reference: {
+    type: String,
+    required: true,
+  },
   course: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Course',

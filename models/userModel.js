@@ -1,5 +1,7 @@
 /* eslint-disable func-names */
 const bcrypt = require('bcrypt');
+const { SSL_OP_SSLREF2_REUSE_CERT_TYPE_BUG } = require('constants');
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 const validator = require('validator');
 
@@ -21,14 +23,23 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Please choose a password'],
     select: false,
   },
-  isAdmin: {
+  passwordResetToken: String,
+  passwordResetTokenExpire: Date,
+  role: {
     type: String,
-    default: false,
+    enum: ['user', 'admin'],
+    default: 'user',
   },
   paidCourse: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Payment',
+    },
+  ],
+  subscriptions: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Subcription',
     },
   ],
   createdAt: {
@@ -48,5 +59,16 @@ userSchema.pre('save', async function (next) {
 userSchema.methods.checkCorrectPassword = function (userPassword, dbPassword) {
   return bcrypt.compare(userPassword, dbPassword);
 };
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+  this.passwordResetTokenExpire = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
+};
+
 const User = mongoose.model('Accounts', userSchema);
 module.exports = User;

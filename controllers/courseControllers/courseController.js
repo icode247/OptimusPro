@@ -8,7 +8,7 @@ exports.getAllCourse = catchAsync(async (req, res, next) => {
   const courses = id
     ? await Course.findById(id)
     : await Course.find().sort({ _id: '-1' }).limit(10);
-  res.status(201).json({
+  res.status(200).json({
     status: 'success',
     length: courses && courses.length,
     data: {

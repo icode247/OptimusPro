@@ -8,5 +8,5 @@ dotenv.config();
 //connection to mongoDB
 mongoose.connect(process.env.MONGO_URI);
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT);
